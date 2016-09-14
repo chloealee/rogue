@@ -20,4 +20,12 @@ class ReportbackItem extends Model
     {
         return $this->belongsTo(Reportback::class);
     }
+
+    /**
+     * The reactions that belong to the reportbackitem.
+     */
+    public function reactions()
+    {
+        return $this->belongsToMany('App\Reaction');
+    }
 }
