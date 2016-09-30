@@ -24,13 +24,13 @@ class ReportbackService
      * @param array $data
      * @return \Rogue\Models\Reportback $reportback.
      */
-    public function create($data)
+    public function create($data, $transactionID)
     {
         $reportback = $this->reportbackRepository->create($data);
 
         // POST reportback back to Phoenix.
         // If request fails, record in failed_jobs table.
-        dispatch(new SendReportbackToPhoenix($reportback));
+        dispatch(new SendReportbackToPhoenix($reportback, $transactionID));
 
         return $reportback;
     }
@@ -43,13 +43,13 @@ class ReportbackService
      *
      * @return \Rogue\Models\Reportback $reportback.
      */
-    public function update($reportback, $data)
+    public function update($reportback, $data, $transactionID)
     {
         $reportback = $this->reportbackRepository->update($reportback, $data);
 
         // POST reportback update back to Phoenix.
         // If request fails, record in failed_jobs table.
-        dispatch(new SendReportbackToPhoenix($reportback));
+        dispatch(new SendReportbackToPhoenix($reportback, $transactionID));
 
         return $reportback;
     }
@@ -86,3 +86,5 @@ class ReportbackService
         return $items;
     }
 }
+
+

@@ -5,6 +5,7 @@ namespace Rogue\Services;
 use DoSomething\Northstar\Common\RestApiClient;
 use GuzzleHttp\Cookie\CookieJar;
 use Cache;
+use Request;
 
 class Phoenix extends RestApiClient
 {
@@ -71,6 +72,7 @@ class Phoenix extends RestApiClient
      *
      * @param string $nid
      * @param array $body
+     * @param string $transactionID
      * @param bool $withAuthorization - Should this request be authorized?
      * @return object|false
      */
@@ -92,12 +94,14 @@ class Phoenix extends RestApiClient
      */
     public function raw($method, $path, $options, $withAuthorization = true)
     {
+        $newTransactionIDHeader = ['X-Request-ID' => Request::header('X-Request-ID') + 2];
+
         if ($withAuthorization) {
             if (! isset($options['token'])) {
                 $authorizationHeader = [];
                 $authorizationHeader['X-CSRF-Token'] = $this->getAuthenticationToken();
                 $options['cookies'] = $this->getAuthenticationCookie();
-                $options['headers'] = array_merge($this->defaultHeaders, $authorizationHeader);
+                $options['headers'] = array_merge($this->defaultHeaders, $authorizationHeader, $newTransactionIDHeader);
             }
         }
 

@@ -7,7 +7,8 @@ use Rogue\Http\Requests\ReportbackRequest;
 use Rogue\Services\ReportbackService;
 use Rogue\Http\Transformers\ReportbackTransformer;
 use Rogue\Http\Transformers\ReportbackItemTransformer;
-use Illuminate\Http\Request;
+use Request;
+use Log;
 
 class ReportbackController extends ApiController
 {
@@ -36,6 +37,11 @@ class ReportbackController extends ApiController
      */
     public function store(ReportbackRequest $request)
     {
+        // Receive transaction ID, increment the ID, and and log that the reportback has been received.
+        $transactionID = Request::header('X-Request-ID');
+        $transactionID++;
+        Log::info('Reportback request received from Phoenix. Transaction ID: ' . $transactionID);
+
         // @TODO - instead should probably just have a method that gets northstar_id by default from a drupal_id if that is the only thing provided and then use that to find the reportback.
         $userId = $request['northstar_id'] ? $request['northstar_id'] : $request['drupal_id'];
         $type = $request['northstar_id'] ? 'northstar_id' : 'drupal_id';
@@ -45,11 +51,11 @@ class ReportbackController extends ApiController
         $updating = ! is_null($reportback);
 
         if (! $updating) {
-            $reportback = $this->reportbackService->create($request->all());
+            $reportback = $this->reportbackService->create($request->all(), $transactionID);
 
             $code = 200;
         } else {
-            $reportback = $this->reportbackService->update($reportback, $request->all());
+            $reportback = $this->reportbackService->update($reportback, $request->all(), $transactionID);
 
             $code = 201;
         }
