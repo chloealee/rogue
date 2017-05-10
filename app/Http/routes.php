@@ -24,6 +24,8 @@ Route::group(['middleware' => 'web'], function () {
     Route::get('campaigns/{id}/inbox', 'CampaignsController@show');
 
     Route::get('users', 'UsersController@index');
+
+
 });
 
 // Legacy API Routes
