@@ -109,14 +109,6 @@ class CampaignSingle extends React.Component {
       include: ['signup', 'siblings'],
     })
       .then((json) => {
-        var arr = [];
-        for (var i = 0; i < json.data.length; i++) {
-            arr.push(json.data[i]);
-        }
-        const sortedResult = arr.sort(function(a, b) {
-          return parseFloat(a.signup.data.quantity) - parseFloat(b.signup.data.quantity);
-        });
-        console.log(sortedResult);
         this.setState({ loadingNewPosts: false });
         this.props.setNewPosts(json);
       });
